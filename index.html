@@ -44,7 +44,7 @@ $(function(){
 			var datos = lbltitulo + titulo + ampersand + lblfecha + fecha + ampersand + lblmonto + monto; 
 			$.ajax({
 				type: "POST",
-				url: "//php/insertar.php",
+				url: "php/insertar.php",
 				data: datos,
 				success:function(r){
 					if (r==1){
