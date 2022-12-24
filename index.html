@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script
+	src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>
+<script>
+$(function(){
+	$.ajax({
+		url : 'https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF43718/datos/oportuno?token=a1c463fe78e0106c6949fd5bff786b3dc5de9207bbbfc2c178984e6e94c5e400',
+		jsonp : 'callback',
+		dataType : 'jsonp', //Se utiliza JSONP para realizar la consulta cross-site
+		success : function(response) {  //Handler de la respuesta
+			var series=response.bmx.series;
+			//Se carga una tabla con los registros obtenidos
+			for (var i in series) {
+				  var serie=series[i];
+				  var reg_title = serie.titulo
+				  $('#title').append(reg_title);
+				  var reg_date = serie.datos[0].fecha
+				  $('#date').append(reg_date);
+				  var reg_amount = serie.datos[0].dato
+				  $('#amount').append(reg_amount);
+			}
+		}
+	});
+	
+});
+</script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#btnGuardar').click(function(){
+			see_first_result();
+		});
+	});
+	function see_first_result(){
+		$('#table_content').each(function(){
+			let titulo = $(this).find('td').eq(0).text();
+			let fecha = $(this).find('td').eq(1).text();
+			let monto = $(this).find('td').eq(2).text();
+			var lbltitulo = "titulo="
+			var lblfecha = "fecha=";
+			var lblmonto = "monto=";
+			var ampersand = "&";
+			var datos = lbltitulo + titulo + ampersand + lblfecha + fecha + ampersand + lblmonto + monto; 
+			$.ajax({
+				type: "POST",
+				url: "//php/insertar.php",
+				data: datos,
+				success:function(r){
+					if (r==1){
+						alert("Guardado con éxito");
+					} else{
+						alert("Fallo al guardar la información");
+					}
+				}
+			});
+			return false;
+		});
+	}
+</script>
+</head>
+<body>
+<table id='result'>
+	<thead>
+		<tr>
+			<th>Titulo</th>
+			<th>Fecha</th>
+			<th>Monto</th>
+		</tr>
+	</thead>
+	<tbody id ="table_content">
+		<tr>
+			<td id ="title"></td>
+			<td id= "date"></td>
+			<td id = "amount"></td>
+
+		</tr>
+	</tbody>
+<caption>Tipo de cambio Pesos-Dolares Banxico</caption>
+</table>
+<p></p>
+<button id ="btnGuardar"> Guardar información</button>
+</body>
+<style>
+    caption {
+    	padding: 20px;
+    	font-size: 30px;
+    }
+	td {
+		background-color: #9aa9a6;
+		padding: 20px;
+	}
+	table {
+	    border: 10px solid #33C4FF; 
+    	border-spacing: 10px;
+    	border-collapse: separate;
+	}
+</style>
+</html>
